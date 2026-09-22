@@ -1,0 +1,20 @@
+{
+  "name": "Retail 3x2 Layout (Demo Tuned)",
+  "description": "Demo-optimized 3x2 shelf region for generated inventory imagery",
+  "rows": 2,
+  "cols": 3,
+  "shelf_region": {
+    "x1": 100,
+    "y1": 100,
+    "x2": 1180,
+    "y2": 710
+  },
+  "expected_items": {
+    "SLOT_0_0": "book",
+    "SLOT_0_1": "apple",
+    "SLOT_0_2": "cup",
+    "SLOT_1_0": "headphones",
+    "SLOT_1_1": "banana",
+    "SLOT_1_2": "bottle"
+  }
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inventory-Management-Tracking-System Dashboard{% endblock %}</title>
+
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="brand">
+                    <i data-lucide="box" class="brand-icon"></i>
+                    <span>Inventory-Management-Tracking-System</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                        <i data-lucide="layout-dashboard"></i> Live View
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/inventory" class="{% if request.path == '/inventory' %}active{% endif %}">
+                        <i data-lucide="package"></i> Inventory
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/events" class="{% if request.path == '/events' %}active{% endif %}">
+                        <i data-lucide="history"></i> Events
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/alerts" class="{% if request.path == '/alerts' %}active{% endif %}">
+                        <i data-lucide="bell"></i> Alerts
+                        <span id="alert-badge" class="badge badge-danger hidden" style="margin-left: auto;">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span id="connection-status" class="dot disconnected"></span>
+                    <span id="status-text">Disconnected</span>
+                </div>
+            </div>
+        </aside>
+
+        <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <header class="top-bar">
+                <div class="top-left">
+                    <button id="btn-sidebar-toggle" class="btn btn-secondary menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                        <i data-lucide="menu" style="width: 16px;"></i>
+                    </button>
+                    <h1 class="page-title">{% block header %}Dashboard{% endblock %}</h1>
+                </div>
+                <div class="top-actions">
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        <i data-lucide="refresh-cw" style="width: 16px;"></i>
+                    </button>
+                    <div class="user-profile">
+                        <!-- Placeholder for user profile if needed -->
+                    </div>
+                </div>
+            </header>
+
+            <main class="content-container">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Initialize Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

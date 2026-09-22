@@ -1,0 +1,148 @@
+# ==================================================
+# Inventory-Management-Tracking-System
+# .gitignore Configuration
+# ==================================================
+
+# ============ Python ============
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============ Virtual Environment ============
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# ============ IDE ============
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ============ Database ============
+*.db
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+data/shelf.db
+data/demo_shelf.db
+data/*.db
+
+# ============ Logs ============
+*.log
+logs/
+data/logs/*.log
+*.log.*
+
+# ============ YOLO Models ============
+# Downloaded automatically on first run
+*.pt
+*.onnx
+*.engine
+# Keep the default model
+!yolov8n.pt
+
+# ============ Environment Variables ============
+.env
+.env.local
+.env.*.local
+*.env
+.evn
+
+# ============ OS Files ============
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============ Test Artifacts ============
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.cover
+*.py,cover
+.cache
+nosetests.xml
+coverage.xml
+*.coveragerc
+
+# ============ Documentation Build ============
+docs/_build/
+docs/.doctrees/
+site/
+.mkdocs_cache/
+
+# ============ Jupyter Notebooks ============
+.ipynb_checkpoints
+*.ipynb
+
+# ============ MyPy ============
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============ Temporary Files ============
+*.tmp
+*.temp
+*.bak
+*.backup
+*~.nib
+*.swp
+*.swo
+.*.swp
+.*.swo
+
+# ============ Large Demo Assets ============
+# Uncomment if demo assets get too large
+# demo_assets/inventory_photos/*.png
+# demo_assets/inventory_photos/*.jpg
+# demo_assets/inventory_frames/*.jpg
+
+# ============ Development ============
+scratch/
+sandbox/
+experiments/
+.scratch/
+
+# ============ Distribution ============
+*.whl
+*.tar.gz
+*.zip
+
+# ============ Local Configuration Overrides ============
+config.local.yaml
+config.*.local.yaml
+
+# ============ Session State ============
+.session/
+session_state/

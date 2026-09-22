@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}System Alerts - Inventory-Management-Tracking-System{% endblock %}
+{% block header %}System Alerts{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i data-lucide="bell"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Active Alerts</h3>
+            <p id="active-alerts">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--info); background: rgba(59, 130, 246, 0.1);">
+            <i data-lucide="info"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Info</h3>
+            <p id="info-count">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--warning); background: rgba(245, 158, 11, 0.1);">
+            <i data-lucide="alert-circle"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Warnings</h3>
+            <p id="warning-count">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--danger); background: rgba(239, 68, 68, 0.1);">
+            <i data-lucide="siren"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Critical</h3>
+            <p id="critical-count">0</p>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts List -->
+<section class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i data-lucide="siren"></i> Alert List
+        </div>
+        <div class="top-actions">
+            <button id="btn-ack-all" class="btn btn-secondary"><i data-lucide="check"></i> Acknowledge All</button>
+            <button id="btn-refresh" class="btn btn-secondary"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+    </div>
+
+    <div id="alerts-list" class="alerts-list">
+        <!-- Alerts populated by JavaScript -->
+    </div>
+
+    <div id="empty-state" class="empty-state-panel hidden" style="padding: 4rem;">
+        <i data-lucide="check-circle"
+            style="width: 48px; height: 48px; margin-bottom: 1rem; color: var(--success);"></i>
+        <p>No active alerts - all clear!</p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAlerts();
+        lucide.createIcons();
+
+        document.getElementById('btn-refresh').addEventListener('click', loadAlerts);
+        document.getElementById('btn-ack-all').addEventListener('click', acknowledgeAll);
+    });
+
+    async function loadAlerts() {
+        try {
+            const response = await fetch('/api/alerts');
+            const data = await response.json();
+
+            updateAlertStats(data.counts);
+            renderAlerts(data.alerts);
+
+            // Keep sidebar badge in sync after acknowledge/refresh actions.
+            if (typeof updateAlertBadge === 'function') {
+                updateAlertBadge();
+            }
+        } catch (error) {
+            console.error('Error loading alerts:', error);
+        }
+    }
+
+    function updateAlertStats(counts) {
+        document.getElementById('active-alerts').textContent = counts.active || 0;
+        document.getElementById('info-count').textContent = counts.info || 0;
+        document.getElementById('warning-count').textContent = counts.warning || 0;
+        document.getElementById('critical-count').textContent = counts.critical || 0;
+    }
+
+    function renderAlerts(alerts) {
+        const container = document.getElementById('alerts-list');
+        const emptyState = document.getElementById('empty-state');
+
+        if (!alerts || alerts.length === 0) {
+            container.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+
+        container.innerHTML = alerts.map(alert => `
+        <div class="card" style="margin-bottom: 1rem; border-left: 4px solid var(--${alert.level});">
+            <div style="display:flex; align-items:flex-start; gap:1rem;">
+                <div style="color: var(--${alert.level}); padding-top:2px;">
+                    <i data-lucide="${getAlertIconName(alert.level)}"></i>
+                </div>
+                <div style="flex:1;">
+                    <h4 style="font-weight:600; margin-bottom:0.25rem;">${alert.title}</h4>
+                    <p style="color:var(--text-secondary); font-size:0.875rem; margin-bottom:0.5rem;">${alert.message}</p>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${formatTime(alert.timestamp)}</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="acknowledgeAlert('${alert.alert_id}')" title="Acknowledge">
+                    <i data-lucide="check"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+        // Refresh icons since we added dynamic HTML
+        lucide.createIcons();
+    }
+
+    function getAlertIconName(level) {
+        const icons = {
+            'info': 'info',
+            'warning': 'alert-triangle',
+            'critical': 'siren'
+        };
+        return icons[level] || 'bell';
+    }
+
+    function formatTime(timestamp) {
+        return new Date(timestamp).toLocaleString();
+    }
+
+    async function acknowledgeAlert(alertId) {
+        try {
+            await fetch(`/api/alerts/${alertId}/acknowledge`, { method: 'POST' });
+            loadAlerts();
+        } catch (error) {
+            console.error('Error acknowledging alert:', error);
+        }
+    }
+
+    async function acknowledgeAll() {
+        try {
+            const response = await fetch('/api/alerts/acknowledge-all', { method: 'POST' });
+            const data = await response.json();
+            if (data.success) {
+                loadAlerts();
+            }
+        } catch (error) {
+            console.error('Error acknowledging all alerts:', error);
+        }
+    }
+</script>
+{% endblock %}

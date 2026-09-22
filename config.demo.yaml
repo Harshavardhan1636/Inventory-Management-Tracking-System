@@ -1,0 +1,104 @@
+# Inventory-Management-Tracking-System Demo Configuration (presentation-safe)
+# This file is isolated from config.yaml and uses separate demo DB/log paths.
+
+system:
+  name: "Inventory-Management-Tracking-System - Demo"
+  version: "1.0.0-demo"
+  debug: true
+
+camera:
+  device_id: 0
+  device_candidates: [0, 1, 2, 3]
+  fps: 8
+  resolution: [1280, 720]
+  buffer_size: 2
+  backend: "dshow"
+  fourcc: "MJPG"
+  warmup_frames: 8
+  auto_exposure: 0.75
+  strict_signal_validation: true
+  no_signal_mean_threshold: 8.0
+  no_signal_std_threshold: 4.0
+  no_signal_confirm_frames: 8
+  signal_recovery_confirm_frames: 4
+  reconnect_retry_interval_seconds: 5
+
+  # Demo pipeline: run only from a single fixed shelf image
+  force_demo_mode: true
+  demo_frame_interval_seconds: 5.0
+  use_demo_fallback_on_no_signal: true
+  demo_fallback_frame: "demo_assets/inventory_photos/Gemini_Generated_Image_s9326us9326us932.png"
+  demo_fallback_frames_dir: "demo_assets/inventory_photos"
+
+detection:
+  model: "yolo12m.pt"
+  confidence_threshold: 0.20
+  iou_threshold: 0.4
+  device: "auto"
+  use_half_precision: true
+  classes: []
+
+shelf:
+  layout: "config/shelf_layouts/retail_3x2_demo.json"
+  rows: 2
+  cols: 3
+
+reasoning:
+  temporal_window: 10
+  short_absence_threshold: 2
+  removal_threshold: 5
+  confidence_threshold: 0.65
+  gemini_fusion:
+    enabled: true
+    agreement_weight: 0.30
+    conflict_confidence_threshold: 0.75
+    conflict_penalty: 0.50
+    inject_min_confidence: 0.70
+    inject_confidence_scale: 0.90
+
+gemini:
+  enabled: true
+  mode: "live"
+  model: "models/gemini-3.1-flash-live-preview"
+  allow_generate_content_fallback: false
+  api_key_env: "GEMINI_API_KEY"
+  min_interval_seconds: 2.5
+  request_timeout_seconds: 3.5
+  max_hint_age_seconds: 60.0
+  verify_all_frames: false
+  verify_when_no_detections: true
+  trigger_confidence_threshold: 0.55
+  generate_retry_attempts: 3
+  generate_retry_backoff_seconds: 1.0
+  error_cooldown_seconds: 12.0
+  max_image_side: 960
+  jpeg_quality: 75
+  agreement_weight: 0.30
+  conflict_confidence_threshold: 0.75
+  disagreement_penalty: 0.50
+  log_verbose: false
+
+inventory:
+  low_stock_threshold: 2
+  shelf_low_stock_threshold: 1
+  shelf_count_confidence_threshold: 0.6
+  alert_cooldown_seconds: 60
+  seed_on_startup: true
+  seed_mode: "replace"
+  seed_items:
+    book: 24
+    apple: 36
+    cup: 24
+    headphones: 12
+    banana: 30
+    bottle: 24
+  auto_update: true
+  min_confidence: 0.65
+
+database:
+  path: "data/demo_shelf.db"
+
+api:
+  host: "127.0.0.1"
+  port: 5050
+  debug: true

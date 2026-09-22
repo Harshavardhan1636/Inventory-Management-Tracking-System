@@ -1,0 +1,107 @@
+# =============================================================================
+# Inventory-Management-Tracking-System Configuration File
+# Inventory-Management-Tracking-System
+# =============================================================================
+
+system:
+  name: "Inventory-Management-Tracking-System"
+  version: "1.0.0"
+  debug: true
+
+# Camera Settings
+camera:
+  device_id: 0              # 0 for built-in webcam
+  device_candidates: [0, 1, 2, 3]  # strict mode probes these in order and picks first with valid frames
+  fps: 30                   # Target frame rate
+  resolution: [1280, 720]   # Width x Height
+  buffer_size: 2            # Frame buffer size
+  backend: "dshow"         # strict mode: use the most stable Windows backend for this hardware
+  fourcc: "MJPG"           # Helps many webcams sustain target FPS on Windows
+  warmup_frames: 12         # Extra warmup helps real webcams stabilize exposure
+  auto_exposure: 0.75       # Keep auto-exposure enabled by default
+  strict_signal_validation: true   # strict mode rejects repeated near-black/no-signal frames
+  no_signal_mean_threshold: 8.0    # tune for laptop webcams that produce dim startup frames
+  no_signal_std_threshold: 4.0     # low variance + low brightness indicates no visible signal
+  no_signal_confirm_frames: 12     # require sustained no-signal before marking camera unavailable
+  signal_recovery_confirm_frames: 8  # require sustained valid frames before clearing no-signal
+  reconnect_retry_interval_seconds: 10  # keep retrying camera startup so feed can recover without app restart
+  use_demo_fallback_on_no_signal: false  # strict real-camera-only mode
+  demo_fallback_frame: "demo_output/frame_000060.jpg"  # Reused when no visible camera signal
+  demo_fallback_frames_dir: "demo_output"  # Used when demo_fallback_frame is missing
+
+# Object Detection Settings
+detection:
+  model: "yolo12m.pt"       # Medium-size YOLO model
+  confidence_threshold: 0.5  # Minimum confidence (0-1)
+  iou_threshold: 0.4        # IoU threshold for NMS
+  device: "auto"           # auto picks CUDA when available, else CPU
+  use_half_precision: true  # Use FP16 on CUDA for faster inference
+  classes: []               # Empty = all classes, or list specific class IDs
+
+# Shelf Layout Settings
+shelf:
+  layout: "config/shelf_layouts/retail_3x2.json"
+  rows: 2
+  cols: 3
+
+# Reasoning Engine Settings
+reasoning:
+  temporal_window: 10       # Number of frames to buffer
+  short_absence_threshold: 2  # Frames to ignore (occlusion)
+  removal_threshold: 5      # Consecutive empty frames for removal
+  confidence_threshold: 0.7  # Minimum aggregated confidence
+  gemini_fusion:
+    enabled: true
+    agreement_weight: 0.30
+    conflict_confidence_threshold: 0.75
+    conflict_penalty: 0.50
+    inject_min_confidence: 0.70
+    inject_confidence_scale: 0.90
+
+# Gemini secondary validator (YOLO remains primary for live overlays)
+gemini:
+  enabled: true
+  mode: "live"                  # live | generate_content | auto
+  model: "models/gemini-3.1-flash-live-preview"
+  allow_generate_content_fallback: false
+  api_key_env: "GEMINI_API_KEY" # export this env var with your Gemini API key
+  min_interval_seconds: 1.0       # Live API video guidance is low FPS (max ~1 fps)
+  request_timeout_seconds: 3.5
+  max_hint_age_seconds: 5.0
+  verify_all_frames: true
+  verify_when_no_detections: true
+  trigger_confidence_threshold: 0.60
+  max_image_side: 960
+  jpeg_quality: 75
+  agreement_weight: 0.30
+  conflict_confidence_threshold: 0.75
+  disagreement_penalty: 0.50
+  log_verbose: false
+
+# Inventory Settings
+inventory:
+  low_stock_threshold: 2    # When to trigger low stock alert
+  shelf_low_stock_threshold: 1  # Minimum desired shelf count before alert
+  shelf_count_confidence_threshold: 0.6  # Fused confidence needed to count shelf items
+  alert_cooldown_seconds: 60  # Cooldown to prevent repeated alerts
+  seed_on_startup: true  # Populate demo inventory if database is empty
+  seed_mode: "merge"  # merge adds missing items, replace overwrites seed items
+  seed_items:
+    book: 24
+    apple: 36
+    cup: 24
+    headphones: 12
+    banana: 30
+    bottle: 24
+  auto_update: true         # Automatically update inventory
+  min_confidence: 0.7       # Minimum confidence for actions
+
+# Database Settings
+database:
+  path: "data/shelf.db"
+
+# API Settings
+api:
+  host: "127.0.0.1"
+  port: 5000
+  debug: true

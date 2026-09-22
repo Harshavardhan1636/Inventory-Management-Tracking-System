@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Event Timeline - Inventory-Management-Tracking-System{% endblock %}
+{% block header %}Event Timeline{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i data-lucide="scroll"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Events</h3>
+            <p id="total-events">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--success); background: rgba(16, 185, 129, 0.1);">
+            <i data-lucide="plus"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Additions</h3>
+            <p id="additions-count">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--accent); background: rgba(229, 165, 75, 0.1);">
+            <i data-lucide="minus"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Removals</h3>
+            <p id="removals-count">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--warning); background: rgba(245, 158, 11, 0.1);">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Misplacements</h3>
+            <p id="misplaced-count">0</p>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline -->
+<section class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i data-lucide="list"></i> Event Log
+        </div>
+        <div class="top-actions">
+            <select id="event-filter"
+                style="background:var(--bg-main); border:1px solid var(--border-default); color:var(--text-primary); padding:0.5rem; border-radius:var(--radius-sm);">
+                <option value="all">All Events</option>
+                <option value="item_removed">Removals</option>
+                <option value="item_added">Additions</option>
+                <option value="item_misplaced">Misplacements</option>
+                <option value="uncertain_state">Uncertain</option>
+            </select>
+            <button id="btn-refresh" class="btn btn-secondary"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+    </div>
+
+    <div id="events-timeline" class="timeline">
+        <!-- Events populated by JavaScript -->
+    </div>
+
+    <div id="empty-state" class="empty-state-panel hidden" style="padding: 4rem;">
+        <i data-lucide="mailbox" style="width: 48px; height: 48px; margin-bottom: 1rem;"></i>
+        <p>No events recorded yet</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endblock %}

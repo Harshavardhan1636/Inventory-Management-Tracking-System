@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Management - Inventory-Management-Tracking-System{% endblock %}
+{% block header %}Inventory Management{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i data-lucide="box"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Item Types</h3>
+            <p id="total-items">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--info); background: rgba(59, 130, 246, 0.1);">
+            <i data-lucide="database"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Units</h3>
+            <p id="total-units">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--warning); background: rgba(245, 158, 11, 0.1);">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Low Stock</h3>
+            <p id="low-stock-count">0</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="color: var(--danger); background: rgba(239, 68, 68, 0.1);">
+            <i data-lucide="slash"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Out of Stock</h3>
+            <p id="out-of-stock-count">0</p>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+<section class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i data-lucide="clipboard-list"></i> Inventory Items
+        </div>
+        <div class="top-actions">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search items..."
+                    style="background: var(--bg-main); border: 1px solid var(--border-default); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+            </div>
+            <button id="btn-refresh" class="btn btn-secondary"><i data-lucide="refresh-cw"></i> Refresh</button>
+            <button id="btn-add-item" class="btn btn-primary"><i data-lucide="plus"></i> Add Item</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table" id="inventory-table">
+            <thead>
+                <tr>
+                    <th>ITEM</th>
+                    <th>QUANTITY</th>
+                    <th>STATUS</th>
+                    <th>LAST UPDATED</th>
+                    <th class="text-right">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-body">
+                <!-- Rows populated by JavaScript -->
+            </tbody>
+        </table>
+        <div id="empty-state" class="empty-state-panel hidden" style="padding: 4rem;">
+            <i data-lucide="mailbox" style="width: 48px; height: 48px; margin-bottom: 1rem;"></i>
+            <p>No inventory items found</p>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Modal Implementation needed here if not handled by external JS logic -->
+<!-- Reusing existing modal structure logic but with new classes -->
+<div id="edit-modal" class="modal hidden"
+    style="position:fixed; top:0; left:0; width:100%; height:100vh; background:rgba(0,0,0,0.8); z-index:100; display:flex; align-items:center; justify-content:center;">
+    <div class="card" style="width: 400px; margin: 0;">
+        <div class="card-header">
+            <div class="card-title">Edit Item</div>
+            <button class="btn btn-secondary" onclick="closeModal()">✕</button>
+        </div>
+        <div style="padding: 1rem 0;">
+            <div class="mb-4">
+                <label style="display:block; margin-bottom:0.5rem; color:var(--text-secondary);">Item Name</label>
+                <input type="text" id="item-name" readonly
+                    style="width:100%; background:var(--bg-main); border:1px solid var(--border-default); padding:0.5rem; color:var(--text-primary); border-radius:var(--radius-sm);">
+            </div>
+            <div class="mb-4">
+                <label style="display:block; margin-bottom:0.5rem; color:var(--text-secondary);">Quantity Change</label>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn btn-secondary" onclick="changeQuantity(-1)">-</button>
+                    <input type="number" id="quantity-change" value="0"
+                        style="flex:1; text-align:center; background:var(--bg-main); border:1px solid var(--border-default); padding:0.5rem; color:var(--text-primary); border-radius:var(--radius-sm);">
+                    <button class="btn btn-secondary" onclick="changeQuantity(1)">+</button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label style="display:block; margin-bottom:0.5rem; color:var(--text-secondary);">Reason</label>
+                <input type="text" id="update-reason" placeholder="Reason for change..."
+                    style="width:100%; background:var(--bg-main); border:1px solid var(--border-default); padding:0.5rem; color:var(--text-primary); border-radius:var(--radius-sm);">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/inventory.js') }}"></script>
+{% endblock %}

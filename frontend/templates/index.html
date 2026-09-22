@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Live Shelf Monitor - Inventory-Management-Tracking-System{% endblock %}
+{% block header %}Live Shelf Monitor{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Left Column: Video & Stats -->
+    <div class="main-column">
+        <!-- Video Feed -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i data-lucide="camera"></i> Camera Feed
+                </div>
+                <div class="actions">
+                    <input id="attachment-file-input" type="file" accept="image/*,video/*" class="hidden">
+                    <button id="btn-upload-attachment" class="btn btn-secondary">
+                        <i data-lucide="paperclip"></i> Attach Demo Sample
+                    </button>
+                    <button id="btn-start-attachment" class="btn btn-secondary" disabled>
+                        <i data-lucide="play-circle"></i> Start Demo
+                    </button>
+                    <button id="btn-stop-attachment" class="btn btn-secondary hidden">
+                        <i data-lucide="stop-circle"></i> Stop Demo
+                    </button>
+                    <span id="attachment-status" class="badge">Demo: none</span>
+                    <button id="btn-start-stream" class="btn btn-primary">
+                        <i data-lucide="play"></i> Start Stream
+                    </button>
+                    <button id="btn-stop-stream" class="btn btn-secondary hidden">
+                        <i data-lucide="square"></i> Stop Stream
+                    </button>
+                    <span id="fps-display" class="badge">FPS: --</span>
+                </div>
+            </div>
+            <div class="video-container">
+                <img id="video-feed" class="video-feed" alt="Live Feed"
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+                <div id="video-placeholder" class="video-placeholder">
+                    <i data-lucide="video-off" style="width: 48px; height: 48px; margin-bottom: 1rem;"></i>
+                    <p>Stream paused</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i data-lucide="bar-chart-2"></i> Quick Stats
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="package"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Items</h3>
+                        <p id="stat-total-items">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="grid"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Occupied Slots</h3>
+                        <p id="stat-occupied-slots">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="alert-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Low Stock</h3>
+                        <p id="stat-low-stock">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i data-lucide="bell"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Alerts</h3>
+                        <p id="stat-alerts">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Right Column: Shelf State & Events -->
+    <div class="side-column">
+        <!-- Shelf State -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i data-lucide="layout-grid"></i> Shelf State
+                </div>
+                <button id="btn-refresh-state" class="btn btn-secondary btn-sm">
+                    <i data-lucide="refresh-cw" style="width: 14px;"></i>
+                </button>
+            </div>
+            <div id="shelf-grid" class="shelf-visual">
+                <!-- Slots populated by JS -->
+            </div>
+        </section>
+
+        <!-- Recent Events -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i data-lucide="file-text"></i> Recent Events
+                </div>
+                <a href="/events" style="font-size: 0.875rem; color: var(--accent);">View All →</a>
+            </div>
+            <div id="recent-events" class="events-list">
+                <p class="text-secondary" style="text-align: center; padding: 2rem;">No events yet</p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/live_feed.js') }}"></script>
+{% endblock %}
